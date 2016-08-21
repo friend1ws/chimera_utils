@@ -1,6 +1,6 @@
 #! /usr/bin/env python
 
-import sys, subprocess
+import sys, os, subprocess
 import count
 import fusionfusion.parseJunctionInfo
 from fusionfusion.config import *
@@ -36,4 +36,45 @@ def count_main(args):
         subprocess.call(["rm", "-rf", args.output_file + ".chimeric.tmp.txt"])
         subprocess.call(["rm", "-rf", args.output_file + ".chimeric.txt"])
         subprocess.call(["rm", "-rf", args.output_file + ".chimeric.clustered.txt"])
+
+
+def merge_control_main(args):
+
+    # make directory for output if necessary
+    # if os.path.dirname(args.output_file) != "" and not os.path.exists(os.path.dirname(args.output_file)):
+    #     os.makedirs(os.path.dirname(args.output_file))
+
+    subprocess.call(["touch", args.output_file + ".unsorted"])
+    hout = open(args.output_file + ".unsorted", 'a')
+
+    with open(args.chimeric_count_list, 'r') as hin:
+        for line in hin:
+            count_file = line.rstrip('\n')
+            with open(count_file, 'r') as hin2:
+                subprocess.call(["cut", "-f1-7", count_file], stdout = hout)
+
+    hout.close()
+
+
+    hout = open(args.output_file + ".sorted", 'w')
+    s_ret = subprocess.call(["sort", "-k1,1", "-k2,2n", "-k4,4", "-k5,5n", "-u", args.output_file + ".unsorted"], stdout = hout)
+    hout.close()
+
+    hout = open(args.output_file, 'w')
+    s_ret = subprocess.call(["bgzip", "-f", "-c", args.output_file + ".sorted"], stdout = hout)
+    hout.close()
+
+    if s_ret != 0:
+        print >> sys.stderr, "Error in compression merged junction file"
+        sys.exit(1)
+
+
+    s_ret = subprocess.call(["tabix", "-p", "vcf", args.output_file])
+    if s_ret != 0:
+        print >> sys.stderr, "Error in indexing merged junction file"
+        sys.exit(1)
+
+    subprocess.call(["rm", "-f", args.output_file + ".unsorted"])
+    subprocess.call(["rm", "-f", args.output_file + ".sorted"])
+
 
