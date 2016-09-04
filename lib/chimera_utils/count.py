@@ -16,6 +16,9 @@ def get_chimera_info(input_file, output_file):
     hin = open(input_file, 'r')
     hout = open(output_file, 'w')
 
+    print >> hout, '\t'.join(["Chr_1", "Pos_1", "Dir_1", "Chr_2", "Pos_2", "Dir_2", 
+                              "Inserted_Seq", "Read_Pair_Num", "Max_Over_Hang_1", "Max_Over_Hang_2"])
+
     for line in hin:
         F = line.rstrip('\n').split('\t')
 

@@ -52,17 +52,23 @@ def merge_control_main(args):
         for line in hin:
             count_file = line.rstrip('\n')
             with open(count_file, 'r') as hin2:
-                subprocess.call(["cut", "-f1-7", count_file], stdout = hout)
+                
+                tail = subprocess.Popen(["tail", "-n", "+2", count_file], stdout = subprocess.PIPE)
+                cut = subprocess.Popen(["cut", "-f1-7"], stdin = tail.stdout, stdout = hout)
 
     hout.close()
 
 
     hout = open(args.output_file + ".sorted", 'w')
-    s_ret = subprocess.call(["sort", "-k1,1", "-k2,2n", "-k4,4", "-k5,5n", "-u", args.output_file + ".unsorted"], stdout = hout)
+    s_ret = subprocess.call(["sort", "-k1,1", "-k2,2n", "-k4,4", "-k5,5n", args.output_file + ".unsorted"], stdout = hout)
+    hout.close()
+
+    hout = open(args.output_file + ".merged", 'w')
+    s_ret = subprocess.call(["uniq", args.output_file + ".sorted"], stdout = hout)
     hout.close()
 
     hout = open(args.output_file, 'w')
-    s_ret = subprocess.call(["bgzip", "-f", "-c", args.output_file + ".sorted"], stdout = hout)
+    s_ret = subprocess.call(["bgzip", "-f", "-c", args.output_file + ".merged"], stdout = hout)
     hout.close()
 
     if s_ret != 0:
@@ -77,11 +83,10 @@ def merge_control_main(args):
 
     subprocess.call(["rm", "-f", args.output_file + ".unsorted"])
     subprocess.call(["rm", "-f", args.output_file + ".sorted"])
-
+    subprocess.call(["rm", "-f", args.output_file + ".merged"])
 
 
 def associate_main(args): 
-
 
     process.convert_to_bedpe(args.chimera_file, args.output_file + ".fusion.bedpe", args.sv_margin_major, args.sv_margin_minor)
     process.convert_to_bedpe(args.genomonSV_file, args.output_file + ".genomonSV.bedpe", args.margin, args.margin)
@@ -115,58 +120,60 @@ def associate_main(args):
 
 
     # add SV annotation to fusion
-    hin = open(args.chimera_file, 'r')
     hout = open(args.output_file, 'w')
-    for line in hin:
-        F = line.rstrip('\n').split('\t')
-        ID = ','.join([F[0], F[1], F[2], F[3], F[4], F[5], F[6]])
+    with open(args.chimera_file, 'r') as hin:
+        header = hin.readline().rstrip('\n')
+        print >> hout, header + '\t' + '\t'.join(["Gene_1", "Gene_2", "Junc_1", "Junc_2", "Chimera_Class", "SV_Key"])
+ 
+        for line in hin:
+            F = line.rstrip('\n').split('\t')
+            ID = ','.join([F[0], F[1], F[2], F[3], F[4], F[5], F[6]])
 
-        if ID not in chimera2sv: continue
-        SV_info = chimera2sv[ID]
+            if ID not in chimera2sv: continue
+            SV_info = chimera2sv[ID]
 
-        ref_gene_info_1 = get_gene_info(F[0], F[1], ref_gene_tb) 
-        ens_gene_info_1 = get_gene_info(F[0], F[1], ens_gene_tb)
-        gene_info_1 = ref_gene_info_1 if len(ref_gene_info_1) > 0 else ens_gene_info_1
+            ref_gene_info_1 = get_gene_info(F[0], F[1], ref_gene_tb) 
+            ens_gene_info_1 = get_gene_info(F[0], F[1], ens_gene_tb)
+            gene_info_1 = ref_gene_info_1 if len(ref_gene_info_1) > 0 else ens_gene_info_1
 
-        ref_gene_info_2 = get_gene_info(F[3], F[4], ref_gene_tb)
-        ens_gene_info_2 = get_gene_info(F[3], F[4], ens_gene_tb)
-        gene_info_2 = ref_gene_info_2 if len(ref_gene_info_2) > 0 else ens_gene_info_2
+            ref_gene_info_2 = get_gene_info(F[3], F[4], ref_gene_tb)
+            ens_gene_info_2 = get_gene_info(F[3], F[4], ens_gene_tb)
+            gene_info_2 = ref_gene_info_2 if len(ref_gene_info_2) > 0 else ens_gene_info_2
         
-        junc_info_1 = get_junc_info(F[0], F[1], ref_exon_tb, 5) 
-        if len(junc_info_1) == 0: junc_info_1 = get_junc_info(F[0], F[1], ens_exon_tb, 5)
+            junc_info_1 = get_junc_info(F[0], F[1], ref_exon_tb, 5) 
+            if len(junc_info_1) == 0: junc_info_1 = get_junc_info(F[0], F[1], ens_exon_tb, 5)
         
-        junc_info_2 = get_junc_info(F[3], F[4], ref_exon_tb, 5) 
-        if len(junc_info_2) == 0: junc_info_2 = get_junc_info(F[3], F[4], ens_exon_tb, 5)
+            junc_info_2 = get_junc_info(F[3], F[4], ref_exon_tb, 5) 
+            if len(junc_info_2) == 0: junc_info_2 = get_junc_info(F[3], F[4], ens_exon_tb, 5)
+
+            same_gene_flag = False        
+            for g1 in ref_gene_info_1 + ens_gene_info_1:
+                for g2 in ref_gene_info_2 + ens_gene_info_2:
+                    if g1 == g2: same_gene_flag = True
+
+            gene_info_str_1 = "---" if len(gene_info_1) == 0 else ','.join(list(set(gene_info_1)))
+            gene_info_str_2 = "---" if len(gene_info_2) == 0 else ','.join(list(set(gene_info_2)))
+            junc_info_str_1 = "---" if len(junc_info_1) == 0 else ','.join(list(set(junc_info_1)))
+            junc_info_str_2 = "---" if len(junc_info_2) == 0 else ','.join(list(set(junc_info_2)))
 
 
-        same_gene_flag = False        
-        for g1 in ref_gene_info_1 + ens_gene_info_1:
-            for g2 in ref_gene_info_2 + ens_gene_info_2:
-                if g1 == g2: same_gene_flag = True
-
-        gene_info_str_1 = "---" if len(gene_info_1) == 0 else ','.join(list(set(gene_info_1)))
-        gene_info_str_2 = "---" if len(gene_info_2) == 0 else ','.join(list(set(gene_info_2)))
-        junc_info_str_1 = "---" if len(junc_info_1) == 0 else ','.join(list(set(junc_info_1)))
-        junc_info_str_2 = "---" if len(junc_info_2) == 0 else ','.join(list(set(junc_info_2)))
-
-
-        sv_chr1, sv_pos1, sv_dir1, sv_chr2, sv_pos2, sv_dir2, sv_inseq = SV_info.split(',')
+            sv_chr1, sv_pos1, sv_dir1, sv_chr2, sv_pos2, sv_dir2, sv_inseq = SV_info.split(',')
 
         
-        if junc_info_str_1 != "---" or junc_info_str_2 != "---":
-            if sv_dir1 == '-' and sv_dir2 == '+' and same_gene_flag == True:
-                chimera_type = "exon_reusage"
+            if junc_info_str_1 != "---" or junc_info_str_2 != "---":
+                if sv_dir1 == '-' and sv_dir2 == '+' and same_gene_flag == True:
+                    chimera_type = "exon_reusage"
+                else:
+                    chimera_type = "spliced_chimera"
+            elif abs(int(F[1]) - int(sv_pos1)) < 30 and abs(int(F[4]) - int(sv_pos2)) < 30:
+                chimera_type = "unspliced_chimera"
             else:
-                chimera_type = "spliced_chimera"
-        elif abs(int(F[1]) - int(sv_pos1)) < 30 and abs(int(F[4]) - int(sv_pos2)) < 30:
-            chimera_type = "unspliced_chimera"
-        else:
-            chimera_type = "putative_spliced_chimera"
+                chimera_type = "putative_spliced_chimera"
 
 
-        print >> hout, '\t'.join(F) + '\t' + gene_info_str_1 + '\t' + gene_info_str_2 + '\t' + \
-                       junc_info_str_1 + '\t' + junc_info_str_2 + '\t' + \
-                       chimera_type + '\t' + SV_info
+            print >> hout, '\t'.join(F) + '\t' + gene_info_str_1 + '\t' + gene_info_str_2 + '\t' + \
+                           junc_info_str_1 + '\t' + junc_info_str_2 + '\t' + \
+                           chimera_type + '\t' + SV_info
 
     hin.close()
     hout.close()
