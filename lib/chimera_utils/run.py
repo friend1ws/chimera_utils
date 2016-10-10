@@ -45,6 +45,7 @@ def merge_control_main(args):
     # if os.path.dirname(args.output_file) != "" and not os.path.exists(os.path.dirname(args.output_file)):
     #     os.makedirs(os.path.dirname(args.output_file))
 
+    subprocess.call(["rm", "-rf", args.output_file + ".unsorted"])
     subprocess.call(["touch", args.output_file + ".unsorted"])
     hout = open(args.output_file + ".unsorted", 'a')
 
@@ -52,15 +53,20 @@ def merge_control_main(args):
         for line in hin:
             count_file = line.rstrip('\n')
             with open(count_file, 'r') as hin2:
-                
-                tail = subprocess.Popen(["tail", "-n", "+2", count_file], stdout = subprocess.PIPE)
-                cut = subprocess.Popen(["cut", "-f1-7"], stdin = tail.stdout, stdout = hout)
+                for line2 in hin2:
+                    if line2.startswith("Chr_1"): continue
+                    F = line2.rstrip('\n').split('\t')
+                    print >> hout, '\t'.join(F[:7])
+            
+            # the following code produces errors... need to investigate subprocess.. 
+            # tail = subprocess.Popen(["tail", "-n", "+2", count_file], stdout = subprocess.PIPE)
+            # cut = subprocess.Popen(["cut", "-f1-7"], stdin = tail.stdout, stdout = hout)
 
     hout.close()
 
 
     hout = open(args.output_file + ".sorted", 'w')
-    s_ret = subprocess.call(["sort", "-k1,1", "-k2,2n", "-k4,4", "-k5,5n", args.output_file + ".unsorted"], stdout = hout)
+    s_ret = subprocess.check_call(["sort", "-k1,1", "-k2,2n", "-k4,4", "-k5,5n", args.output_file + ".unsorted"], stdout = hout)
     hout.close()
 
     hout = open(args.output_file + ".merged", 'w')
@@ -81,9 +87,9 @@ def merge_control_main(args):
         print >> sys.stderr, "Error in indexing merged junction file"
         sys.exit(1)
 
-    subprocess.call(["rm", "-f", args.output_file + ".unsorted"])
-    subprocess.call(["rm", "-f", args.output_file + ".sorted"])
-    subprocess.call(["rm", "-f", args.output_file + ".merged"])
+    # subprocess.call(["rm", "-f", args.output_file + ".unsorted"])
+    # subprocess.call(["rm", "-f", args.output_file + ".sorted"])
+    # subprocess.call(["rm", "-f", args.output_file + ".merged"])
 
 
 def associate_main(args): 
@@ -108,8 +114,8 @@ def associate_main(args):
     from annot_utils.exon import *
     from annot_utils.annotation import *
 
-    make_gene_info(args.output_file + ".refGene.bed.gz", "ref", args.genome_id, args.is_grc, False)
-    make_exon_info(args.output_file + ".refExon.bed.gz", "ref", args.genome_id, args.is_grc, False)
+    make_gene_info(args.output_file + ".refGene.bed.gz", "ref", args.genome_id, args.is_grc, True)
+    make_exon_info(args.output_file + ".refExon.bed.gz", "ref", args.genome_id, args.is_grc, True)
     make_gene_info(args.output_file + ".ensGene.bed.gz", "ens", args.genome_id, args.is_grc, False)
     make_exon_info(args.output_file + ".ensExon.bed.gz", "ens", args.genome_id, args.is_grc, False)
 
@@ -151,21 +157,21 @@ def associate_main(args):
                 for g2 in ref_gene_info_2 + ens_gene_info_2:
                     if g1 == g2: same_gene_flag = True
 
-            gene_info_str_1 = "---" if len(gene_info_1) == 0 else ','.join(list(set(gene_info_1)))
-            gene_info_str_2 = "---" if len(gene_info_2) == 0 else ','.join(list(set(gene_info_2)))
-            junc_info_str_1 = "---" if len(junc_info_1) == 0 else ','.join(list(set(junc_info_1)))
-            junc_info_str_2 = "---" if len(junc_info_2) == 0 else ','.join(list(set(junc_info_2)))
+            gene_info_str_1 = "---" if len(gene_info_1) == 0 else ';'.join(list(set(gene_info_1)))
+            gene_info_str_2 = "---" if len(gene_info_2) == 0 else ';'.join(list(set(gene_info_2)))
+            junc_info_str_1 = "---" if len(junc_info_1) == 0 else ';'.join(list(set(junc_info_1)))
+            junc_info_str_2 = "---" if len(junc_info_2) == 0 else ';'.join(list(set(junc_info_2)))
 
 
             sv_chr1, sv_pos1, sv_dir1, sv_chr2, sv_pos2, sv_dir2, sv_inseq = SV_info.split(',')
 
         
-            if junc_info_str_1 != "---" or junc_info_str_2 != "---":
+            if ("start" in junc_info_str_1 and "end" in junc_info_str_2) or ("start" in junc_info_str_2 and "end" in junc_info_str_1):
                 if sv_dir1 == '-' and sv_dir2 == '+' and same_gene_flag == True:
                     chimera_type = "exon_reusage"
                 else:
                     chimera_type = "spliced_chimera"
-            elif abs(int(F[1]) - int(sv_pos1)) < 30 and abs(int(F[4]) - int(sv_pos2)) < 30:
+            elif abs(int(F[1]) - int(sv_pos1)) < 10 and abs(int(F[4]) - int(sv_pos2)) < 10:
                 chimera_type = "unspliced_chimera"
             else:
                 chimera_type = "putative_spliced_chimera"
