@@ -25,7 +25,7 @@ def count_main(args):
     fusionfusion.parseJunctionInfo.parseJuncInfo_STAR(args.chimeric_sam, args.output_file + ".chimeric.tmp.txt")
 
     hout = open(args.output_file + ".chimeric.txt", 'w')
-    subprocess.call(["sort", "-k1,1", "-k2,2n", "-k4,4", "-k5,5n", args.output_file + ".chimeric.tmp.txt"], stdout = hout)
+    subprocess.check_call(["sort", "-k1,1", "-k2,2n", "-k4,4", "-k5,5n", args.output_file + ".chimeric.tmp.txt"], stdout = hout)
     hout.close()
 
     fusionfusion.parseJunctionInfo.clusterJuncInfo(args.output_file + ".chimeric.txt",
@@ -34,9 +34,9 @@ def count_main(args):
     count.get_chimera_info(args.output_file + ".chimeric.clustered.txt", args.output_file)
 
     if param_conf.debug == False:
-        subprocess.call(["rm", "-rf", args.output_file + ".chimeric.tmp.txt"])
-        subprocess.call(["rm", "-rf", args.output_file + ".chimeric.txt"])
-        subprocess.call(["rm", "-rf", args.output_file + ".chimeric.clustered.txt"])
+        subprocess.check_call(["rm", "-rf", args.output_file + ".chimeric.tmp.txt"])
+        subprocess.check_call(["rm", "-rf", args.output_file + ".chimeric.txt"])
+        subprocess.check_call(["rm", "-rf", args.output_file + ".chimeric.clustered.txt"])
 
 
 def merge_control_main(args):
@@ -45,8 +45,8 @@ def merge_control_main(args):
     # if os.path.dirname(args.output_file) != "" and not os.path.exists(os.path.dirname(args.output_file)):
     #     os.makedirs(os.path.dirname(args.output_file))
 
-    subprocess.call(["rm", "-rf", args.output_file + ".unsorted"])
-    subprocess.call(["touch", args.output_file + ".unsorted"])
+    subprocess.check_call(["rm", "-rf", args.output_file + ".unsorted"])
+    subprocess.check_call(["touch", args.output_file + ".unsorted"])
     hout = open(args.output_file + ".unsorted", 'a')
 
     with open(args.chimeric_count_list, 'r') as hin:
@@ -70,11 +70,11 @@ def merge_control_main(args):
     hout.close()
 
     hout = open(args.output_file + ".merged", 'w')
-    s_ret = subprocess.call(["uniq", args.output_file + ".sorted"], stdout = hout)
+    s_ret = subprocess.check_call(["uniq", args.output_file + ".sorted"], stdout = hout)
     hout.close()
 
     hout = open(args.output_file, 'w')
-    s_ret = subprocess.call(["bgzip", "-f", "-c", args.output_file + ".merged"], stdout = hout)
+    s_ret = subprocess.check_call(["bgzip", "-f", "-c", args.output_file + ".merged"], stdout = hout)
     hout.close()
 
     if s_ret != 0:
@@ -82,14 +82,14 @@ def merge_control_main(args):
         sys.exit(1)
 
 
-    s_ret = subprocess.call(["tabix", "-p", "vcf", args.output_file])
+    s_ret = subprocess.check_call(["tabix", "-p", "vcf", args.output_file])
     if s_ret != 0:
         print >> sys.stderr, "Error in indexing merged junction file"
         sys.exit(1)
 
-    # subprocess.call(["rm", "-f", args.output_file + ".unsorted"])
-    # subprocess.call(["rm", "-f", args.output_file + ".sorted"])
-    # subprocess.call(["rm", "-f", args.output_file + ".merged"])
+    subprocess.check_call(["rm", "-f", args.output_file + ".unsorted"])
+    subprocess.check_call(["rm", "-f", args.output_file + ".sorted"])
+    subprocess.check_call(["rm", "-f", args.output_file + ".merged"])
 
 
 def associate_main(args): 
@@ -114,10 +114,10 @@ def associate_main(args):
     from annot_utils.exon import *
     from annot_utils.annotation import *
 
-    make_gene_info(args.output_file + ".refGene.bed.gz", "ref", args.genome_id, args.is_grc, True)
-    make_exon_info(args.output_file + ".refExon.bed.gz", "ref", args.genome_id, args.is_grc, True)
-    make_gene_info(args.output_file + ".ensGene.bed.gz", "ens", args.genome_id, args.is_grc, False)
-    make_exon_info(args.output_file + ".ensExon.bed.gz", "ens", args.genome_id, args.is_grc, False)
+    make_gene_info(args.output_file + ".refGene.bed.gz", "refseq", args.genome_id, args.is_grc, True)
+    make_exon_info(args.output_file + ".refExon.bed.gz", "refseq", args.genome_id, args.is_grc, True)
+    make_gene_info(args.output_file + ".ensGene.bed.gz", "gencode", args.genome_id, args.is_grc, False)
+    make_exon_info(args.output_file + ".ensExon.bed.gz", "gencode", args.genome_id, args.is_grc, False)
 
     ref_gene_tb = pysam.TabixFile(args.output_file + ".refGene.bed.gz")
     ref_exon_tb = pysam.TabixFile(args.output_file + ".refExon.bed.gz")
@@ -186,16 +186,16 @@ def associate_main(args):
 
 
     if args.debug == False:
-        subprocess.call(["rm", "-rf", args.output_file + ".fusion.bedpe"])
-        subprocess.call(["rm", "-rf", args.output_file + ".genomonSV.bedpe"])
-        subprocess.call(["rm", "-rf", args.output_file + ".fusion_comp.bedpe"])
-        subprocess.call(["rm", "-rf", args.output_file + ".refGene.bed.gz"])
-        subprocess.call(["rm", "-rf", args.output_file + ".refGene.bed.gz.tbi"])
-        subprocess.call(["rm", "-rf", args.output_file + ".refExon.bed.gz"])
-        subprocess.call(["rm", "-rf", args.output_file + ".refExon.bed.gz.tbi"])
-        subprocess.call(["rm", "-rf", args.output_file + ".ensGene.bed.gz"])
-        subprocess.call(["rm", "-rf", args.output_file + ".ensGene.bed.gz.tbi"])
-        subprocess.call(["rm", "-rf", args.output_file + ".ensExon.bed.gz"])
-        subprocess.call(["rm", "-rf", args.output_file + ".ensExon.bed.gz.tbi"])
+        subprocess.check_call(["rm", "-rf", args.output_file + ".fusion.bedpe"])
+        subprocess.check_call(["rm", "-rf", args.output_file + ".genomonSV.bedpe"])
+        subprocess.check_call(["rm", "-rf", args.output_file + ".fusion_comp.bedpe"])
+        subprocess.check_call(["rm", "-rf", args.output_file + ".refGene.bed.gz"])
+        subprocess.check_call(["rm", "-rf", args.output_file + ".refGene.bed.gz.tbi"])
+        subprocess.check_call(["rm", "-rf", args.output_file + ".refExon.bed.gz"])
+        subprocess.check_call(["rm", "-rf", args.output_file + ".refExon.bed.gz.tbi"])
+        subprocess.check_call(["rm", "-rf", args.output_file + ".ensGene.bed.gz"])
+        subprocess.check_call(["rm", "-rf", args.output_file + ".ensGene.bed.gz.tbi"])
+        subprocess.check_call(["rm", "-rf", args.output_file + ".ensExon.bed.gz"])
+        subprocess.check_call(["rm", "-rf", args.output_file + ".ensExon.bed.gz.tbi"])
   
 
