@@ -2,7 +2,7 @@
 
 from distutils.core import setup
 
-setup(name='intron_retention_utils',
+setup(name='chimera_utils',
       version='0.3.0',
       description='Python tools for processing chimeric reads',
       author='Yuichi Shiraishi',
