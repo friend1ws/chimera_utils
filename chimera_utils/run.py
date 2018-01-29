@@ -15,11 +15,6 @@ def count_main(args):
     param_conf.min_cover_size = args.min_cover_size
     param_conf.anchor_size_thres = args.anchor_size_thres
     param_conf.min_chimeric_size = args.min_chimeric_size
-    # param_conf.min_allowed_contig_match_diff = args.min_allowed_contig_match_diff
-    # param_conf.check_contig_size_other_breakpoint = args.check_contig_size_other_breakpoint
-    # param_conf.filter_same_gene = args.filter_same_gene
-    # param_conf.reference_genome = args.reference_genome
-    # param_conf.resource_dir = args.resource_dir
 
 
     fusionfusion.parseJunctionInfo.parseJuncInfo_STAR(args.chimeric_sam, args.output_file + ".chimeric.tmp.txt")
@@ -42,8 +37,8 @@ def count_main(args):
 def merge_control_main(args):
 
     # make directory for output if necessary
-    # if os.path.dirname(args.output_file) != "" and not os.path.exists(os.path.dirname(args.output_file)):
-    #     os.makedirs(os.path.dirname(args.output_file))
+    if os.path.dirname(args.output_file) != "" and not os.path.exists(os.path.dirname(args.output_file)):
+        os.makedirs(os.path.dirname(args.output_file))
 
     subprocess.check_call(["rm", "-rf", args.output_file + ".unsorted"])
     subprocess.check_call(["touch", args.output_file + ".unsorted"])
