@@ -109,7 +109,7 @@ def create_parser():
     associate.add_argument("--genome_id", choices = ["hg19", "hg38", "mm10"], default = "hg19",
                            help = "the genome id used for selecting UCSC-GRC chromosome name corresponding files (default: %(default)s)")
 
-    associate.add_argument("--is_grc", default = False, action = 'store_true',
+    associate.add_argument("--grc", default = False, action = 'store_true',
                            help = "convert chromosome names to Genome Reference Consortium nomenclature (default: %(default)s)")
 
     associate.add_argument("--debug", default = False, action = 'store_true', help = "keep intermediate files")
