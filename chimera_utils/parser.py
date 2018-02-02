@@ -6,7 +6,7 @@ import argparse
 def create_parser():
 
     parser = argparse.ArgumentParser(prog = "chimera_utils")
-    parser.add_argument("--version", action = "version", version = "sv_utils-0.4.0b1")
+    parser.add_argument("--version", action = "version", version = "sv_utils-0.4.0")
 
     subparsers = parser.add_subparsers()
 

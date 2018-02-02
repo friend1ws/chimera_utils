@@ -12,7 +12,7 @@ with open(path.join(here, 'README.md'), encoding='utf-8') as f:
 
 setup(
     name = 'chimera_utils',
-    version = '0.4.0b1',
+    version = '0.4.0',
     description='Python tools for processing chimeric reads and lists of gene fusions.',
     url = 'https://github.com/friend1ws/chimera_utils',
     author = 'Yuichi Shiraishi',
