@@ -25,8 +25,8 @@ pip install chimera_utils
 
 Alternatively you can download from the source code:
 ```
-wget https://github.com/Genomon-Project/fusionfusion/archive/v0.3.0.tar.gz
-tar zxvf v0.3.0.tar.gz
+wget https://github.com/friend1ws/chimera_utils/archive/v0.4.0.tar.gz
+tar zxvf v0.4.0.tar.gz
 cd chimera_utils-0.4.0
 python setup.py build install
 ```
