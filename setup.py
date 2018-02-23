@@ -10,9 +10,17 @@ here = path.abspath(path.dirname(__file__))
 with open(path.join(here, 'README.md'), encoding='utf-8') as f:
     long_description = f.read()
 
+def get_version():
+    with open(path.join(here, "chimera_utils/version.py"), encoding = 'utf-8') as hin:
+        for line in hin:
+            if line.startswith("__version__"):
+                version = line.partition('=')[2]
+                return version.strip().strip('\'"')
+    raise ValueError('Could not find version.')
+
 setup(
     name = 'chimera_utils',
-    version = '0.4.0',
+    version = get_version(),
     description='Python tools for processing chimeric reads and lists of gene fusions.',
     url = 'https://github.com/friend1ws/chimera_utils',
     author = 'Yuichi Shiraishi',
@@ -30,7 +38,7 @@ setup(
 
     packages = find_packages(exclude = ['tests']),
 
-    install_requires = [],
+    install_requires = ["annot_utils", "fusionfusion", "pysam"],
     entry_points = {'console_scripts': ['chimera_utils = chimera_utils:main']}
 
 )
