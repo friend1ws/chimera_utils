@@ -163,13 +163,13 @@ def associate_main(args):
         
             if ("start" in junc_info_str_1 and "end" in junc_info_str_2) or ("start" in junc_info_str_2 and "end" in junc_info_str_1):
                 if sv_dir1 == '-' and sv_dir2 == '+' and same_gene_flag == True:
-                    chimera_type = "exon_reusage"
+                    chimera_type = "Exon reusage"
                 else:
-                    chimera_type = "spliced_chimera"
+                    chimera_type = "Spliced chimera"
             elif abs(int(F[1]) - int(sv_pos1)) < 10 and abs(int(F[4]) - int(sv_pos2)) < 10:
-                chimera_type = "unspliced_chimera"
+                chimera_type = "Unspliced chimera"
             else:
-                chimera_type = "putative_spliced_chimera"
+                chimera_type = "Putative spliced chimera"
 
 
             print >> hout, '\t'.join(F) + '\t' + gene_info_str_1 + '\t' + gene_info_str_2 + '\t' + \
