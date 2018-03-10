@@ -25,9 +25,9 @@ pip install chimera_utils
 
 Alternatively you can download from the source code:
 ```
-wget https://github.com/friend1ws/chimera_utils/archive/v0.4.0.tar.gz
-tar zxvf v0.4.0.tar.gz
-cd chimera_utils-0.4.0
+wget https://github.com/friend1ws/chimera_utils/archive/v0.5.0.tar.gz
+tar zxvf v0.5.0.tar.gz
+cd chimera_utils-0.5.0
 python setup.py build install
 ```
 
