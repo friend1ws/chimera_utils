@@ -122,10 +122,10 @@ def associate_main(args):
     from annot_utils.exon import *
     from annotation import *
 
-    make_gene_info(args.output_file + ".refGene.bed.gz", "refseq", args.genome_id, args.grc, True)
-    make_exon_info(args.output_file + ".refExon.bed.gz", "refseq", args.genome_id, args.grc, True)
-    make_gene_info(args.output_file + ".ensGene.bed.gz", "gencode", args.genome_id, args.grc, False)
-    make_exon_info(args.output_file + ".ensExon.bed.gz", "gencode", args.genome_id, args.grc, False)
+    make_gene_info(args.output_file + ".refGene.bed.gz", "refseq", args.genome_id, is_grc, True)
+    make_exon_info(args.output_file + ".refExon.bed.gz", "refseq", args.genome_id, is_grc, True)
+    make_gene_info(args.output_file + ".ensGene.bed.gz", "gencode", args.genome_id, is_grc, False)
+    make_exon_info(args.output_file + ".ensExon.bed.gz", "gencode", args.genome_id, is_grc, False)
 
     ref_gene_tb = pysam.TabixFile(args.output_file + ".refGene.bed.gz")
     ref_exon_tb = pysam.TabixFile(args.output_file + ".refExon.bed.gz")
