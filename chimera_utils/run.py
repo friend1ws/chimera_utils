@@ -5,6 +5,8 @@ import count, process
 import fusionfusion.parseJunctionInfo
 from fusionfusion.config import *
 
+from logger import get_logger
+logger = get_logger()
 
 def count_main(args):
 
@@ -88,6 +90,17 @@ def merge_control_main(args):
 
 
 def associate_main(args): 
+
+    from annot_utils.utils import grc_check
+
+    if args.grc == True:
+        logger.warning("--grc argument is deprecated and ignored.")
+
+    is_grc = grc_check(args.chimera_file, [0, 3])
+    is_grc_sv = grc_check(args.genomonSV_file, [0, 3])
+
+    if is_grc != is_grc_sv:
+        logger.warning("Chimeric count file and SV file seems to use different coordinate system.")
 
     process.convert_to_bedpe(args.chimera_file, args.output_file + ".fusion.bedpe", args.sv_margin_major, args.sv_margin_minor)
     process.convert_to_bedpe(args.genomonSV_file, args.output_file + ".genomonSV.bedpe", args.margin, args.margin)
