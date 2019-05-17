@@ -122,7 +122,7 @@ def associate_main(args):
 
     from annot_utils.gene import *
     from annot_utils.exon import *
-    from annotation import *
+    from .annotation import *
 
     make_gene_info(args.output_file + ".refGene.bed.gz", "refseq", args.genome_id, is_grc, True)
     make_exon_info(args.output_file + ".refExon.bed.gz", "refseq", args.genome_id, is_grc, True)
