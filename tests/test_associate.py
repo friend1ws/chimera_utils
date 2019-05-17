@@ -23,15 +23,12 @@ class TestAssociate(unittest.TestCase):
         output_file = tmp_dir + "/K562.Chimeric.count.associate.txt"
         answer_file = cur_dir + "/data/associate/K562.Chimeric.count.associate.txt"
 
-        print(output_file)
-        print(answer_file)
-
-        args = self.parser.parse_args(["associate", count_file, sv_file, output_file, "--grc"])
+        args = self.parser.parse_args(["associate", count_file, sv_file, output_file])
         args.func(args)
 
         self.assertTrue(filecmp.cmp(output_file, answer_file, shallow=False))
 
-        # shutil.rmtree(tmp_dir)
+        shutil.rmtree(tmp_dir)
 
 if __name__ == "__main__":
     unittest.main()

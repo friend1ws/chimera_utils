@@ -31,14 +31,15 @@ class TestCount(unittest.TestCase):
         answer_file = cur_dir + "/data/count/MCF-7.Chimeric.count.txt"
 
 
-        print(' '.join(["count", star_chimeric_sam, output_file]))
+        # print(' '.join(["count", star_chimeric_sam, output_file]))
         args = self.parser.parse_args(["count", star_chimeric_sam, output_file])
         args.func(args)
 
         # self.assertTrue(filecmp.cmp(output_file, answer_file, shallow=False))
-        self.assertTrue(885 <= len(open(answer_file, 'r').readlines()) <= 905)
+        with open(answer_file, 'r') as hin: record_num = len(hin.readlines())
+        self.assertTrue(885 <= record_num <= 905)
 
-        # shutil.rmtree(tmp_dir)
+        shutil.rmtree(tmp_dir)
 
 if __name__ == "__main__":
     unittest.main()

@@ -4,7 +4,11 @@ from .parser import create_parser
 
 def main():
 
-    parser = create_parser()
-    args = parser.parse_args()
-    args.func(args)
+    cparser = create_parser()
+    args = cparser.parse_args()
+
+    if vars(args) == {}:
+        cparser.print_usage()
+    else:
+        args.func(args)
 
