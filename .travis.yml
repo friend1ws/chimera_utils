@@ -13,6 +13,7 @@ install:
   - pip install pysam
   - pip install annot_utils==0.3.0b3
   - pip install fusionfusion==0.5.0b1
+  - pip install requests
 
 script:
   - pip install . 
