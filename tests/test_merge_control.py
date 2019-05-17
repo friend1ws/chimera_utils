@@ -1,5 +1,7 @@
 #! /usr/bin/env python
 
+from __future__ import print_function
+
 import unittest
 import os, glob, tempfile, shutil, filecmp
 import chimera_utils 
@@ -21,7 +23,7 @@ class TestMergeControl(unittest.TestCase):
         all_count_file = glob.glob(cur_dir + "/data/count/*.Chimeric.count.txt")
         with open(tmp_dir + "/chimera_utils.count_list.txt", 'w') as hout:
             for count_file in sorted(all_count_file):
-                print >> hout, count_file
+                print(count_file, file = hout)
 
         count_list_file = tmp_dir + "/chimera_utils.count_list.txt"
  

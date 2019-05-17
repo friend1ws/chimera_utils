@@ -36,8 +36,8 @@ def get_chimera_info(input_file, output_file):
         if len(uniqueCoverdRegion_meta) < min_read_pair_num: continue
 
         # check the maximum anchor size
-        coverRegionSize_primary = map(region_utils.getCoverSize, coveredRegion_primary)
-        coverRegionSize_SA = map(region_utils.getCoverSize, coveredRegion_SA)
+        coverRegionSize_primary = list(map(region_utils.getCoverSize, coveredRegion_primary))
+        coverRegionSize_SA = list(map(region_utils.getCoverSize, coveredRegion_SA))
         anchor_size = [min(coverRegionSize_primary[i], coverRegionSize_SA[i]) for i in range(len(coverRegionSize_primary))]
         if max(anchor_size) < anchor_size_thres: continue
 

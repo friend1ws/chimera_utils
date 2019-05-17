@@ -3,6 +3,8 @@
 from __future__ import print_function
 
 import sys, os, subprocess
+import pysam
+
 import fusionfusion.parseJunctionInfo
 from fusionfusion.config import *
 
@@ -120,9 +122,9 @@ def associate_main(args):
     
     hin.close()
 
-    from annot_utils.gene import *
-    from annot_utils.exon import *
-    from .annotation import *
+    from annot_utils.gene import make_gene_info  
+    from annot_utils.exon import make_exon_info
+    from .annotation import get_gene_info, get_junc_info
 
     make_gene_info(args.output_file + ".refGene.bed.gz", "refseq", args.genome_id, is_grc, True)
     make_exon_info(args.output_file + ".refExon.bed.gz", "refseq", args.genome_id, is_grc, True)
@@ -167,10 +169,10 @@ def associate_main(args):
                 for g2 in ref_gene_info_2 + ens_gene_info_2:
                     if g1 == g2: same_gene_flag = True
 
-            gene_info_str_1 = "---" if len(gene_info_1) == 0 else ';'.join(list(set(gene_info_1)))
-            gene_info_str_2 = "---" if len(gene_info_2) == 0 else ';'.join(list(set(gene_info_2)))
-            junc_info_str_1 = "---" if len(junc_info_1) == 0 else ';'.join(list(set(junc_info_1)))
-            junc_info_str_2 = "---" if len(junc_info_2) == 0 else ';'.join(list(set(junc_info_2)))
+            gene_info_str_1 = "---" if len(gene_info_1) == 0 else ';'.join(sorted(list(set(gene_info_1))))
+            gene_info_str_2 = "---" if len(gene_info_2) == 0 else ';'.join(sorted(list(set(gene_info_2))))
+            junc_info_str_1 = "---" if len(junc_info_1) == 0 else ';'.join(sorted(list(set(junc_info_1))))
+            junc_info_str_2 = "---" if len(junc_info_2) == 0 else ';'.join(sorted(list(set(junc_info_2))))
 
 
             sv_chr1, sv_pos1, sv_dir1, sv_chr2, sv_pos2, sv_dir2, sv_inseq = SV_info.split(',')

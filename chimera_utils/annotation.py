@@ -19,7 +19,7 @@ def get_gene_info(chr, pos, gene_tb):
             record = record_line.split('\t')
             gene.append(record[3])
 
-    return list(set(gene))
+    return sorted(list(set(gene)))
 
 
 def get_junc_info(chr, pos, exon_tb, junction_margin):
@@ -42,6 +42,6 @@ def get_junc_info(chr, pos, exon_tb, junction_margin):
                 if record[5] == "+": junction.append(record[3] + ".end")
                 if record[5] == "-": junction.append(record[3] + ".start")
 
-    return list(set(junction))
+    return sorted(list(set(junction)))
 
 
