@@ -1,5 +1,7 @@
 #! /usr/bin/env python
 
+from __future__ import print_function
+
 from fusionfusion.config import *
 from fusionfusion import region_utils
 from fusionfusion import regions
@@ -16,8 +18,8 @@ def get_chimera_info(input_file, output_file):
     hin = open(input_file, 'r')
     hout = open(output_file, 'w')
 
-    print >> hout, '\t'.join(["Chr_1", "Pos_1", "Dir_1", "Chr_2", "Pos_2", "Dir_2", 
-                              "Inserted_Seq", "Read_Pair_Num", "Max_Over_Hang_1", "Max_Over_Hang_2"])
+    print('\t'.join(["Chr_1", "Pos_1", "Dir_1", "Chr_2", "Pos_2", "Dir_2", 
+                     "Inserted_Seq", "Read_Pair_Num", "Max_Over_Hang_1", "Max_Over_Hang_2"]), file = hout)
 
     for line in hin:
         F = line.rstrip('\n').split('\t')
@@ -76,7 +78,7 @@ def get_chimera_info(input_file, output_file):
         if region1.regionSize() < min_cover_size or region2.regionSize() < min_cover_size: continue
 
 
-        print >> hout, '\t'.join(F[0:7]) + '\t' + str(len(uniqueCoverdRegion_meta)) + '\t' + str(region1.regionSize()) + '\t' + str(region2.regionSize())
+        print('\t'.join(F[0:7]) + '\t' + str(len(uniqueCoverdRegion_meta)) + '\t' + str(region1.regionSize()) + '\t' + str(region2.regionSize()), file = hout)
 
     hin.close()
     hout.close()

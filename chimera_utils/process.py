@@ -1,5 +1,6 @@
 #! /usr/bin/env python
 
+from __future__ import print_function
 import re
 
 
@@ -32,7 +33,7 @@ def convert_to_bedpe(input_file, output_file, margin_major, margin_minor):
             start2 = str(int(start2) - int(margin_major))
             end2 = str(int(end2) + int(margin_minor))
 
-        print >> hout, '\t'.join([chr1, start1, end1, chr2, start2, end2, ID, str(read_num), dir1, dir2])
+        print('\t'.join([chr1, start1, end1, chr2, start2, end2, ID, str(read_num), dir1, dir2]), file = hout)
 
     hin.close()
     hout.close()

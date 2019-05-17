@@ -1,11 +1,13 @@
 #! /usr/bin/env python
 
+from __future__ import print_function
+
 import sys, os, subprocess
-import count, process
 import fusionfusion.parseJunctionInfo
 from fusionfusion.config import *
 
-from logger import get_logger
+from . import count, process
+from .logger import get_logger
 logger = get_logger()
 
 def count_main(args):
@@ -22,7 +24,7 @@ def count_main(args):
     fusionfusion.parseJunctionInfo.parseJuncInfo_STAR(args.chimeric_sam, args.output_file + ".chimeric.tmp.txt")
 
     hout = open(args.output_file + ".chimeric.txt", 'w')
-    subprocess.check_call(["sort", "-k1,1", "-k2,2n", "-k4,4", "-k5,5n", args.output_file + ".chimeric.tmp.txt"], stdout = hout)
+    subprocess.check_call(["sort", "-f", "-k1,1", "-k2,2n", "-k4,4", "-k5,5n", args.output_file + ".chimeric.tmp.txt"], stdout = hout)
     hout.close()
 
     fusionfusion.parseJunctionInfo.clusterJuncInfo(args.output_file + ".chimeric.txt",
@@ -53,7 +55,7 @@ def merge_control_main(args):
                 for line2 in hin2:
                     if line2.startswith("Chr_1"): continue
                     F = line2.rstrip('\n').split('\t')
-                    print >> hout, '\t'.join(F[:7])
+                    print('\t'.join(F[:7]), file = hout)
             
             # the following code produces errors... need to investigate subprocess.. 
             # tail = subprocess.Popen(["tail", "-n", "+2", count_file], stdout = subprocess.PIPE)
@@ -63,7 +65,7 @@ def merge_control_main(args):
 
 
     hout = open(args.output_file + ".sorted", 'w')
-    s_ret = subprocess.check_call(["sort", "-k1,1", "-k2,2n", "-k4,4", "-k5,5n", args.output_file + ".unsorted"], stdout = hout)
+    s_ret = subprocess.check_call(["sort", "-f", "-k1,1", "-k2,2n", "-k4,4", "-k5,5n", args.output_file + ".unsorted"], stdout = hout)
     hout.close()
 
     hout = open(args.output_file + ".merged", 'w')
@@ -75,13 +77,13 @@ def merge_control_main(args):
     hout.close()
 
     if s_ret != 0:
-        print >> sys.stderr, "Error in compression merged junction file"
+        print("Error in compression merged junction file", file = sys.stderr)
         sys.exit(1)
 
 
     s_ret = subprocess.check_call(["tabix", "-p", "vcf", args.output_file])
     if s_ret != 0:
-        print >> sys.stderr, "Error in indexing merged junction file"
+        print("Error in indexing merged junction file", file = sys.stderr)
         sys.exit(1)
 
     subprocess.check_call(["rm", "-f", args.output_file + ".unsorted"])
@@ -137,7 +139,7 @@ def associate_main(args):
     hout = open(args.output_file, 'w')
     with open(args.chimera_file, 'r') as hin:
         header = hin.readline().rstrip('\n')
-        print >> hout, header + '\t' + '\t'.join(["Gene_1", "Gene_2", "Junc_1", "Junc_2", "Chimera_Class", "SV_Key"])
+        print(header + '\t' + '\t'.join(["Gene_1", "Gene_2", "Junc_1", "Junc_2", "Chimera_Class", "SV_Key"]), file = hout)
  
         for line in hin:
             F = line.rstrip('\n').split('\t')
@@ -185,9 +187,9 @@ def associate_main(args):
                 chimera_type = "Putative spliced chimera"
 
 
-            print >> hout, '\t'.join(F) + '\t' + gene_info_str_1 + '\t' + gene_info_str_2 + '\t' + \
-                           junc_info_str_1 + '\t' + junc_info_str_2 + '\t' + \
-                           chimera_type + '\t' + SV_info
+            print('\t'.join(F) + '\t' + gene_info_str_1 + '\t' + gene_info_str_2 + '\t' + \
+                  junc_info_str_1 + '\t' + junc_info_str_2 + '\t' + \
+                  chimera_type + '\t' + SV_info, file = hout)
 
     hin.close()
     hout.close()
