@@ -25,13 +25,15 @@ pip install chimera_utils
 
 Alternatively you can download from the source code:
 ```
-wget https://github.com/friend1ws/chimera_utils/archive/v0.5.0.tar.gz
+wget https://github.com/friend1ws/chimera_utils/archive/v0.6.0.tar.gz
 tar zxvf v0.6.0.tar.gz
 cd chimera_utils-0.6.0
 python setup.py build install
 ```
 
 For the last command, you may need to add --user if using a shared computing cluster.
+
+This package has been tested on Python 2.7, 3.5, 3.6.
 
 ## Commands
 
