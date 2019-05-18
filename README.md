@@ -11,7 +11,7 @@ This is a suite of tools for processing chimeric reads generated at a STAR align
 ## Dependency
 
 ### Python
-Python (>= 2.7), pysam, [annot_utils](https://github.com/friend1ws/annot_utils), [fusionfusion](https://github.com/Genomon-Project/fusionfusion)
+pysam, [annot_utils](https://github.com/friend1ws/annot_utils), [fusionfusion](https://github.com/Genomon-Project/fusionfusion)
 
 ### Software
 [htslib](http://www.htslib.org), [bedtools](http://bedtools.readthedocs.io/en/latest/)
@@ -26,8 +26,8 @@ pip install chimera_utils
 Alternatively you can download from the source code:
 ```
 wget https://github.com/friend1ws/chimera_utils/archive/v0.5.0.tar.gz
-tar zxvf v0.5.0.tar.gz
-cd chimera_utils-0.5.0
+tar zxvf v0.6.0.tar.gz
+cd chimera_utils-0.6.0
 python setup.py build install
 ```
 
