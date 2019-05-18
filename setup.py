@@ -42,7 +42,7 @@ setup(
 
     packages = find_packages(exclude = ['tests']),
 
-    install_requires = ["annot_utils>=0.2.1", "fusionfusion", "pysam"],
+    install_requires = ["annot_utils>=0.3.0", "fusionfusion>=0.5.0", "pysam>=0.9.0"],
     entry_points = {'console_scripts': ['chimera_utils = chimera_utils:main']}
 
 )

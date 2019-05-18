@@ -11,8 +11,8 @@ install:
   - tar zxvf bedtools-2.27.0.tar.gz
   - cd bedtools2 && make && export PATH=$PATH:$PWD/bin && cd ..
   - pip install pysam
-  - pip install annot_utils==0.3.0b3
-  - pip install fusionfusion==0.5.0b1
+  - pip install annot_utils
+  - pip install fusionfusion
   - pip install requests
 
 script:
