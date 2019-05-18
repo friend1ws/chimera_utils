@@ -11,7 +11,7 @@ This is a suite of tools for processing chimeric reads generated at a STAR align
 ## Dependency
 
 ### Python
-pysam, [annot_utils](https://github.com/friend1ws/annot_utils), [fusionfusion](https://github.com/Genomon-Project/fusionfusion)
+`pysam>=0.9.0`, [annot_utils>=0.3.0](https://github.com/friend1ws/annot_utils), [fusionfusion>=0.5.0](https://github.com/Genomon-Project/fusionfusion)
 
 ### Software
 [htslib](http://www.htslib.org), [bedtools](http://bedtools.readthedocs.io/en/latest/)
